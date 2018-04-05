@@ -1,0 +1,24 @@
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+
+# I Guessed this can/ needs to be excluded
+.jacocoverage/
+Rezepte/
+Statistiken/
+test/
+src/essensvorschlag/statistikAutomat
+gerichte(auto).txt
+hashTagFile.txt
+konzept.png
+ListeMoeglicherInteressanterGerichte.txt
+Notizen.txt
+optionFile.txt
+pfad.txt
+tagebuch.txt
+temp.txt
+VorgemerkteGerichteFile.txt

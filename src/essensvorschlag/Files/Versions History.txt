@@ -1,0 +1,103 @@
+---------- V 1.22p --------------
+- (14.9.17) stat angepasst
+- (14.9.17) zutat vormerken hinzugefuegt (zutaten werden nicht auf die 
+liste möglicher interesannter gerichte gespeichert)
+---------- V 1.21 --------------
+- (13.9.17) n paar stats hinzugefuegt
+---------- V 1.20 --------------
+- (12.9.17) n paar stats hinzugefuegt
+- (12.9.17) n schreiben() hinzugefuegt (testing)
+---------- V 1.19 --------------
+- (11.9.17) nicht auf dem vorschlagsbildschirm mehr als zwei sachen von einer kategorie
+(kartoffeln, reis, nudeln) anzeigen; die kategorie wird anhand des namen ermittelt; 
+also kommt der kategorie begriff im namen vor.
+- (10.9.17) notiz menue; ein fenster für text, wo man sich allgemeine anregungen rund ums 
+kochen und tips und so speichern kann
+- (10.9.17) die anzahl der gerichte ändern zu; die anzahl der angezeigten gerichte
+---------- V 1.18 --------------
+- (6.9.17) löschen von gerichten (listen eintrag; 
+rezept muss eigentlich nicht gelöscht werden; ) [neuer button in gerichtMenue]
+---------- V 1.17 --------------
+- (30.8.17) commentar
+- (30.8.17) suchen anpassen: es werden jetzt auch sachen als gesehen markiert, 
+die nicht angezeigt wurden, weil sie durch die hashtags ausgefilltert wurden. 
+Beim suchen werden die hashtags nicht beachtet, weil man ja auch nach sachen suchen 
+können muss die grad nicht angezeigt werden. Wenn man aber nach ""(keine eingabe im suchfeld) sucht,
+dann werden die hashtags noch beachtet, so kann man durch die "ausgewählte" liste durch blättern.
+- (30.8.17) beim neustarten werden die hashtags jetzt berücksichtigt.
+---------- V 1.16 --------------
+- (25.8.17) HashtagFile geupdated auf "version 2"; es werden jetzt die die auswahlen der hashtags mitgespeichert;
+---------- V 1.15 --------------
+- (23.8.17) hintergundbild für die leere menuezone, das scheint auf alle sachen durch; mal schaun ob drin lassen oder nicht; 
+man könnte auch manche undurchsichtig machen, dann hätten die ihren eigen hintergrund.
+- (23.8.17) " 'Einmaliges Essen' eintragen " fügt jetzt das gericht auch zu den "Anregungen hinzu";
+- (23.8.17) die liste möglicher interesannter gerichte einsehbar machen und auch per hand sachen hinzufügbar machen
+- (22.8.17) tagebuch anzeigen
+---------- V 1.14 --------------
+- (20.8.17) wenn man ein rezept speichert und dann gebuildet wird, dann zeigt die graphic den alten text. Hier auch die graphic updaten
+- (20.8.17) vor dem schliesen eines ungespeicherten rezepts, sicherheits frage
+wenn man das rezept nicht schliest sondern einfach zu irgendwqas anderem wechselt, dann wird nicht überprüft ob gespeichert worden ist oder nicht.
+- (20.8.17) stand bei "weniger" mit runterskalieren
+- (20.8.17) stand bei "mehr" mit raufskalieren
+---------- V 1.13 --------------
+- (19.8.17) hintergrundbild für die menuezone (random bilder die noch nicht optimal sind)
+- (19.8.17) sucheingabe wird markiert, beim neu öffnen des such fensters; addAttribut: suchTextMarkieren;
+- (19.8.17) suchen mit enter
+- (19.8.17) suche groß und klein-schreibung ignorieren
+- (01.8.17) den statistik automaten auf eis gelegt; das stats fenster ist im EV geblieben, 
+aber es zeigt jetzt einfach nur noch das gesammte wachstum an; alles was den automaten 
+trifft ins StatistikAutomaten package geschoben und auskommentiert
+- (29.7.17) todo und history in eigene files
+- (29.7.17) basic statistik
+---------- V 1.12 --------------
+- (24.7.17) all Klassen in eigen Files;
+- (24.7.17) Hashtags können jetzt nur noch korrekte zeichen enthalten;
+- (24.7.17) nutzer können keine namen die ein # haben hinzufuegen; Das hätte einen Fehler verursacht, da # ein trennzeichen ist.
+- (24.7.17) rezept Ordner wird erstellt
+- (22.7.17) umbenennen verschieb die rezepte entsprechend mit
+- (22.7.17) rezepte
+- (13.7.17) Ein Button text verbessert
+---------- V 1.11 --------------
+- (12.7.17) vorgemerkte gerichte die noch kein gericht sind, in nem file speichern
+- (12.7.17) BugFix: wenn die hashtag liste leer ist, kann man leere hashtags ans gericht anhängen; das ausschalten
+- (12.7.17) speichern und laden von vorgemerkten gerichten
+- (12.7.17) vormerken Zone hinzugefuegt
+- (12.7.17) auf MENUELEISTE umgestellt
+- (12.7.17) auf MENUEZONE umgestellt
+---------- V 1.10 --------------
+- (5.7.17) BugFix: Öffnen und schliesen des Log verändert jetzt die position des Fensters nicht mehr
+- (5.7.17) BugFix in Hinzufuegen; bei der ertstellung des gerichts wurden die benötigten HashtagSachen nicht berücksichtigt
+- (2.7.17) add Button: einen perhand eintrag ins tagebuch für sachen die kein gericht sind. (sollte nicht so oft verwendet werden)
+---------- V 1.9 ---------------
+- (1.7.17) hashtagfilterung
+- (27.6.17) todo Label geupdated
+- (26.6.17) tagebuchformat geändert; alte einträge werden nicht geupdated;
+---------- V 1.8 ---------------
+- (24.6.17) man kann gerichte jetzt umbennenen
+- (24.6.17) man muss jetzt nichtmehr unbedingt ein (schon bestehendes) gerichte file auswählen; sondern kann auch ein neues erstellen lasse; mit 5 dummy gerichten
+- (24.6.17) convertieren von Exception to String: jetzt klappts | in schreiben
+---------- V 1.7 ---------------
+- (22.6.17) convertieren von Exception to String: nächster versuch (siehe in schreiben)
+- (22.6.17) die scrol leiste im log feld ist jetzt immer unten, also kann man immer automatisch die neuen nachrichten lesen
+- (22.6.17) es sollten jetzt wirklich die ersten vier nicht wachsen; 4 oder drei da backt noch irgendwas; im log steht was nicht wächst
+- (21.6.17) abbrechen beim hinzufuegen sollte jetzt möglich sein
+- (19.6.17) alle exceptions werden geschrieben, aber ka was mit dem programm dannach passiert; 
+    aber es sollte eine warnung und dannac die meldung aufpopen (zusetzlich zum log)
+- (19.6.17) beim hinzufuegen wird jetzt gefragt ob man das gericht bald haben möchte; 
+    der stand des neuen gerichts ist gleich dem 4ten platz
+---------- V 1.6 ---------------
+- (18.6.17) option: PlanungsModus Background Farbe
+- (18.6.17) option: Standart Background Farbe
+- (18.6.17) log button zum einblenden ausblenden
+- (18.6.17) log display
+- (18.6.17) option: fenster pos
+- (18.6.17) option: schriftgröße
+- (18.6.17) option file hinzugefuegt
+- (18.6.17) gerichte anzahl wird angezeigt
+---------- V 1.5 ---------------
+- (17.6.17) bugfix: die suche hat was zerschossen; weil da der planungsmodus mitreinspielte obwohl er das nicht sollte. 
+- anzeigen des letzten essensdatums;
+- bei weniger bleibt der stand jetzt gleich
+- Die vier die nicht wachsen sind die mit dem höchsten stand. (Das ist also unabhängig von der aktuellen anzeige und suchen)
+- "refresh/bumpAll/andere vorschläge" raus aus todo; man kann mit einer leeren suche durch schaun.
+- Hinzufuegen Button

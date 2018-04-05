@@ -1,0 +1,78 @@
+
+*! Ö aus dem Filenamen "ListeMöglicherInteressanterGerichte" entfernt. Code anpassen.
+* den text des coming soon in ein file packen, damit die jar einfach modifiziert werden kann
+* den obersten (oder einen randomen) vorschlag aufgrund von nahrungsanalyse
+(also, dieses gericht fehlt zu einer runden ernährung machen()):
+    - bei gerichten eine liste hinzufuegen; in diese liste können dann punkte eingefuegt werden;
+        punkte können dann ernährungsrelevante punkte wie eisen, selen, vitamin c oder so sein;
+    - einen button um in die liste aller gerichte einen punkt hinzuzufuegen
+        mit null vorinizialisiert;
+    - ein ziel muss festegelegt werden: so und soviel; für wieviel personen; 
+        in welcher zeitspannen pro tage woche monat zb
+    - ein feld dass einen forschlag macht, um einen noch mit null eingetragenen punkt einzutrage, also zu rechachieren ;)
+    - einen allgorithmus der 
+        berechnet welche werte ausserhalb der toleranz liegen
+        tolleranz stufen; je schlimmer die situation ist, desto mehr müssen vorgeschlagen 
+            werden um das auszugleichen und vielleicht bei sehr schlimmen zustand 
+            noch irgendein wahrnsignal geben, (hintergrundfarbe; grichte farbig 
+            oder umrahmen; ein rotes ausrufe zeichen ...)
+        das (/die) gericht raussucht, dass das am besten ausgleicht
+        dieses gericht an einer random position (oder an einer festen?) anzeigen;
+        (vielleicht die unterschiedlichen punkte noch gewichte; 
+            zb vitamin c wichtiger als selen; das geht vielleicht auch über tolleranz)
+* seperate listen für hauptgericht; brotzeit; salat; nachspeise; frühstück; 
+am besten kann man die einfach selbst erstellen. (vielleicht auch eine gesammt ansicht)
+* gewürz lern sektion; tagebuch; neu lern vorschläge
+* die kategorien in die gerichte reinspeichern; dann muss man die beeinflussen können; 
+eine start approximation kann man aus dem namen hohlen
+* suche nach zutaten
+* der statistik automat prüft jetzt ob das programm stimmt, 
+und wird dokumentiert. Es fehlt noch die ausfuehrung des programms
+
+--- todo Überlegeung:
+* vorschlagen neue gerichte hinzuzufuegen
+* (vielleicht sollte man bilder zu gerichten speichern und dann die 
+bilder von den vorgeschlagenen gerichten zeigen)
+* vielleicht n salat button
+* überlegen ob die vorschläge standart mässig überhapt angezeigt werden sollen; 
+(es sollen ja keine vorschläge aufgezwungen werden, es sollen ja nur anregungen sein)
+
+--- todo distribution:
+* Oberfläche verschönern:
+Schatten;
+3d hervorhebungen von Labeln: Die menueLeiste;
+* eine option um das rausfiltern durch die kategorien auszuschalten
+* passendes hintergrundbild suchen
+
+--- todo():
+* boost phasen für gerichte
+* (boost vorschläge)
+* button um neue anregungen hinzuzufuegen
+* Daten in Ordner bündeln
+* statistik variablen; entweder über ne Liste mit namen 
+(aufwendiger, dafür beliebig viele; besser verständlich) 
+    oder über ein paar speicherzellen(weniger aufwand; fürt zu schwerer 
+verständlichen programmen);
+* hashtag filterung:
+() - die momentane hashtag einstellung speichern und dann wieder laden;
+() - liste mit möglichen hashtags: verwalten: entfernen: 
+hierbei muss der gelöschte hashtag aus allen gerichten entfernt werden; 
+warum denn? may dann is der halt da dran und bringt nix mehr; 
+man kann ihn ja per hand am gericht löschen wenn er stört
+() - hashtags an einem gericht anzeigen lassen; beim löschen sieht man alle;
+* nach einem vorgemerkten gericht suchen; automatisch per button;
+* man könnte - denk ich - so ein und auslesezeugs (aus files)  mittels methoden 
+noch besser zusammen fasse;
+
+--- ehemalige
+- statistik automat
+* (überlegung) ein programm schreiben, dass die dokumentation updated; also dass den quellcode 
+    des automaten ausliest und daraus die dokumentation erstellt. Aber nicht einfach 
+    das alte überschreibt sondern updated; (es können eh nur die keywords automatisch 
+    geupdated werden, die beschreibungen müssen per hand gemacht werde. allerding 
+    kann auch geprüft werden ob sich was verändert hat; das könnte dann in der 
+    dokumentation angezeigt werde und darauf hinzuweisen, dass der textt noch 
+    nicht auf richtigkeit überprüft worden ist seit der letzten relevanten änderung)
+* (überlegung) einen statistik programm editor (ide) in das EV-Programm integrieren, 
+der auch prüft (auf Syntaktische korrektheit) und hilft (in dem er möglichkeiten 
+vorschlägt);
