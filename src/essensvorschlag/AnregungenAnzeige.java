@@ -66,7 +66,7 @@ public class AnregungenAnzeige extends JLabel{
         FileReader fr=null;
         try {
             
-            fr = new FileReader(EssensVorschlag.anregungenFilename);
+            fr = new FileReader(EssensVorschlag.dataDirectoryPath+EssensVorschlag.anregungenFilename);
             BufferedReader br=new BufferedReader(fr);
             
             String zeile=br.readLine();
@@ -82,7 +82,7 @@ public class AnregungenAnzeige extends JLabel{
         } catch (FileNotFoundException ex) {
             return "[AnregungenAnzeige](ladeAnregungen) nicht gefunden";
         } catch (IOException ex) {
-            EssensVorschlag.schreiben(ex);
+            EssensVorschlag.writeToLogConsole(ex);
             return "Fehler";
         }
     }

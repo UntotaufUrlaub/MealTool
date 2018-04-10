@@ -74,7 +74,7 @@ class HashTagLabel extends JLabel {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     //reagiert nur auf change
                     String selected = dropDown.getSelectedItem().toString();
-            EssensVorschlag.schreiben("hashtag '" + hashtag + "' : " + selected);
+            EssensVorschlag.writeToLogConsole("hashtag '" + hashtag + "' : " + selected);
                     if (selected.equals("ohne")) {
                         EssensVorschlag.aktiveHashTagsOhne.add(hashtag);
                         EssensVorschlag.aktiveHashTagsNur.remove(hashtag);

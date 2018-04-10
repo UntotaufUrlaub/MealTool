@@ -39,7 +39,7 @@ public class TagebuchAnzeige extends JLabel{
         FileReader fr=null;
         try {
             
-            fr = new FileReader(EssensVorschlag.TagebuchFilename);
+            fr = new FileReader(EssensVorschlag.dataDirectoryPath+EssensVorschlag.TagebuchFilename);
             BufferedReader br=new BufferedReader(fr);
             
             String zeile=br.readLine();
@@ -55,7 +55,7 @@ public class TagebuchAnzeige extends JLabel{
         } catch (FileNotFoundException ex) {
             return "[TagebuchAnzeige](ladeTageBuch) nicht gefunden";
         } catch (IOException ex) {
-            EssensVorschlag.schreiben(ex);
+            EssensVorschlag.writeToLogConsole(ex);
             return "Fehler";
         }
     }

@@ -28,7 +28,7 @@ class MenueLeiste extends JLabel {
         hinzufuegen.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                EssensVorschlag.schreiben("!Warnung! Falls der planungsmodus aktiv ist dann könnte das hinzufuegen nicht funktunieren");
+                EssensVorschlag.writeToLogConsole("!Warnung! Falls der planungsmodus aktiv ist dann könnte das hinzufuegen nicht funktunieren");
                 String name = JOptionPane.showInputDialog(null, "Wie heißt das Gericht?");
                 if (name == null) {
                     return;
@@ -45,7 +45,7 @@ class MenueLeiste extends JLabel {
                 try {
                     intWachstum = Integer.parseInt(wachstum);
                 } catch (NumberFormatException ex) {
-                    EssensVorschlag.schreiben("hinzufuegen; wachstum; NumberFormatException");
+                    EssensVorschlag.writeToLogConsole("hinzufuegen; wachstum; NumberFormatException");
                     intWachstum = 1;
                 }
                 int bald = JOptionPane.showConfirmDialog(null, "bald?", "An Insane Question", JOptionPane.YES_NO_OPTION);
@@ -56,7 +56,7 @@ class MenueLeiste extends JLabel {
                     //bald
                     bald = EssensVorschlag.liste.get(4).stand;
                 }
-                EssensVorschlag.schreiben("(hinzufuegen) stand: " + bald);
+                EssensVorschlag.writeToLogConsole("(hinzufuegen) stand: " + bald);
                 EssensVorschlag.liste.add(new Gericht(name + "#" + bald + "#" + intWachstum + "#null#"));
                 EssensVorschlag.build();
             }

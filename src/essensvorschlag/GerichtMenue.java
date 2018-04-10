@@ -80,13 +80,13 @@ class GerichtMenue extends JLabel {
                         Files.copy(copySourcePath, copyTargetPath);
                         Files.delete(copySourcePath);
                     } catch (NoSuchFileException ex1) {
-                        EssensVorschlag.schreiben("(umbennenen) hatte noch kein rezept");
+                        EssensVorschlag.writeToLogConsole("(umbennenen) hatte noch kein rezept");
                     } catch (FileAlreadyExistsException ex2) {
-                        EssensVorschlag.schreiben("(umbennenen) der name ist schon vergeben (und es gibt schon ein rezept dazu)");
+                        EssensVorschlag.writeToLogConsole("(umbennenen) der name ist schon vergeben (und es gibt schon ein rezept dazu)");
                         return;
                     } catch (IOException ex) {
                         Logger.getLogger(GerichtMenue.class.getName()).log(Level.SEVERE, null, ex);
-                        EssensVorschlag.schreiben(ex);
+                        EssensVorschlag.writeToLogConsole(ex);
                     }
 
                     g.name=eingabe;
@@ -104,10 +104,10 @@ class GerichtMenue extends JLabel {
                 int wirklichLöschen=JOptionPane.showConfirmDialog(null, 
                         "'"+g.name+"' wirklich unwiederruflich löschen?","Bestätigen",JOptionPane.YES_NO_OPTION);
                 if(wirklichLöschen!=0){
-                    EssensVorschlag.schreiben("Löschen von "+g.name+" abgebrochen.");
+                    EssensVorschlag.writeToLogConsole("Löschen von "+g.name+" abgebrochen.");
                     return;
                 }
-                EssensVorschlag.schreiben(g.name+" wurde gelöscht");
+                EssensVorschlag.writeToLogConsole(g.name+" wurde gelöscht");
                 EssensVorschlag.liste.remove(g);
                 EssensVorschlag.build();
             }

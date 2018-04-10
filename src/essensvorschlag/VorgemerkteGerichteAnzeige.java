@@ -101,7 +101,7 @@ class VorgemerkteGerichteAnzeige extends JLabel {
             ImageIcon bild = new ImageIcon(image);
             setIcon(bild);
         } catch (IOException ex) {
-            EssensVorschlag.schreiben("[VorgemerkteGerichteAnzeige] bild nicht geladen; "+picUrl);
+            EssensVorschlag.writeToLogConsole("[VorgemerkteGerichteAnzeige] bild nicht geladen; "+picUrl);
         }
     }
     

@@ -2,6 +2,7 @@
 - (14.9.17) stat angepasst
 - (14.9.17) zutat vormerken hinzugefuegt (zutaten werden nicht auf die 
 liste möglicher interesannter gerichte gespeichert)
+- (10.4.17) linux adaption | File storage location: allways next to jar
 ---------- V 1.21 --------------
 - (13.9.17) n paar stats hinzugefuegt
 ---------- V 1.20 --------------

@@ -40,11 +40,11 @@ class VorgemerktesGerichtLabel extends JLabel {
                         zuListeMöglicherInteressanterGerichtehinzufuegen(g.name);
                     }
                     else{
-                        EssensVorschlag.schreiben("(ListeMöglicherInteressanterGerichte) nicht hinzugefuegt weil nur eine zutat");
+                        EssensVorschlag.writeToLogConsole("(ListeMöglicherInteressanterGerichte) nicht hinzugefuegt weil nur eine zutat");
                     }
                 }
                 else{
-                    EssensVorschlag.schreiben("(ListeMöglicherInteressanterGerichte) schon ein Gericht");
+                    EssensVorschlag.writeToLogConsole("(ListeMöglicherInteressanterGerichte) schon ein Gericht");
                 }
 //EssensVorschlag.schreiben(test+"");
                 EssensVorschlag.build();
@@ -56,19 +56,19 @@ class VorgemerktesGerichtLabel extends JLabel {
     static void zuListeMöglicherInteressanterGerichtehinzufuegen(String name) {
         FileWriter fw = null;
         try {
-            fw = new FileWriter(EssensVorschlag.anregungenFilename, true); //the true will append the new data
+            fw = new FileWriter(EssensVorschlag.dataDirectoryPath+EssensVorschlag.anregungenFilename, true); //the true will append the new data
             Date d = new Date();
             SimpleDateFormat df = new SimpleDateFormat("yyyy MMM dd");
             fw.write(df.format(d) + " : \t\t" + name + System.getProperty("line.separator")); //appends the string to the file
             fw.close();
         } catch (IOException ioe) {
-            EssensVorschlag.schreiben(ioe.getMessage());
+            EssensVorschlag.writeToLogConsole(ioe.getMessage());
             System.err.println("IOException: " + ioe.getMessage());
         } finally {
             try {
                 fw.close();
             } catch (IOException ex) {
-                EssensVorschlag.schreiben(ex);
+                EssensVorschlag.writeToLogConsole(ex);
                 Logger.getLogger(Gericht.class.getName()).log(Level.SEVERE, null, ex);
             }
         }

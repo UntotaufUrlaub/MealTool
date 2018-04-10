@@ -48,7 +48,7 @@ class MenueHintergrund extends JLabel {
             ImageIcon bild = new ImageIcon(image);
             setIcon(bild);
         } catch (IOException ex) {
-            EssensVorschlag.schreiben("[MenueHintergrund] bild nicht geladen; "+picUrl);
+            EssensVorschlag.writeToLogConsole("[MenueHintergrund] bild nicht geladen; "+picUrl);
         }
     }
 }

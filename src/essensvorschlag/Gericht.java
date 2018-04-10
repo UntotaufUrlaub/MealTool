@@ -123,7 +123,7 @@ class Gericht extends JLabel implements Comparable {
                 Collections.sort(liste);
                 //wachsen aller ausser der ersten vier;
                 for (int i = 0; i < 4; i++) {
-                    EssensVorschlag.schreiben("nicht wachsen: " + i + ": " + liste.get(i).name);
+                    EssensVorschlag.writeToLogConsole("nicht wachsen: " + i + ": " + liste.get(i).name);
                 }
                 for (int i = 4; i < liste.size(); i++) {
                     liste.get(i).wachsen();
@@ -202,9 +202,9 @@ class Gericht extends JLabel implements Comparable {
     }
 
     public void essen() {
-        EssensVorschlag.schreiben("essen: " + name);
+        EssensVorschlag.writeToLogConsole("essen: " + name);
         stand = (int) (Math.round(Math.random() * stand / 7));
-        EssensVorschlag.schreiben("planungsModus: " + EssensVorschlag.planungsModus);
+        EssensVorschlag.writeToLogConsole("planungsModus: " + EssensVorschlag.planungsModus);
         if (EssensVorschlag.planungsModus) {
             return;
         }
@@ -243,7 +243,7 @@ class Gericht extends JLabel implements Comparable {
     }
 
     public void weg() {
-        EssensVorschlag.schreiben("weg: " + name);
+        EssensVorschlag.writeToLogConsole("weg: " + name);
         stand = (int) (Math.round(Math.random() * stand / 7));
     }   
 }
