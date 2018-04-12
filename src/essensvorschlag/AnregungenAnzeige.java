@@ -8,9 +8,7 @@ package essensvorschlag;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -63,22 +61,9 @@ public class AnregungenAnzeige extends JLabel{
     }
     
     private String ladeAnregungen(){
-        FileReader fr=null;
         try {
-            
-            fr = new FileReader(EssensVorschlag.dataDirectoryPath+EssensVorschlag.anregungenFilename);
-            BufferedReader br=new BufferedReader(fr);
-            
-            String zeile=br.readLine();
-            String ausgabe="";
-            while(zeile!=null){
-                ausgabe=ausgabe+zeile+"\n";
-                zeile=br.readLine();
-            }
-            
-            fr.close();
-            return ausgabe;
-        
+            String anregungen=DataHandler.loadLocalTextFile(EssensVorschlag.anregungenFilename);
+            return anregungen;
         } catch (FileNotFoundException ex) {
             return "[AnregungenAnzeige](ladeAnregungen) nicht gefunden";
         } catch (IOException ex) {

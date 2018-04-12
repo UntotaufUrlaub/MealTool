@@ -5,9 +5,7 @@
  */
 package essensvorschlag;
 
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -36,22 +34,8 @@ public class TagebuchAnzeige extends JLabel{
     }
     
     private String ladeTageBuch(){
-        FileReader fr=null;
         try {
-            
-            fr = new FileReader(EssensVorschlag.dataDirectoryPath+EssensVorschlag.TagebuchFilename);
-            BufferedReader br=new BufferedReader(fr);
-            
-            String zeile=br.readLine();
-            String ausgabe="";
-            while(zeile!=null){
-                ausgabe=ausgabe+zeile+"\n";
-                zeile=br.readLine();
-            }
-            
-            fr.close();
-            return ausgabe;
-        
+            return DataHandler.loadLocalTextFile(EssensVorschlag.TagebuchFilename);
         } catch (FileNotFoundException ex) {
             return "[TagebuchAnzeige](ladeTageBuch) nicht gefunden";
         } catch (IOException ex) {

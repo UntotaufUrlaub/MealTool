@@ -1,3 +1,4 @@
+*codecoverage tests
 * highlite the error message prints on the logConsole. Maybe with a label (zb. [Error]) or a Color or a tab or new line;
 * kick the path file and switch to just storing the mealListFile, as all other in the same directory. 
     The File got to complex to be off any use on an other location anyway.

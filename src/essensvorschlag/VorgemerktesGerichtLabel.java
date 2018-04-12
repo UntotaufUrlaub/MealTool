@@ -7,13 +7,10 @@ package essensvorschlag;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.function.Predicate;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
@@ -54,23 +51,16 @@ class VorgemerktesGerichtLabel extends JLabel {
     }
 
     static void zuListeMöglicherInteressanterGerichtehinzufuegen(String name) {
-        FileWriter fw = null;
         try {
-            fw = new FileWriter(EssensVorschlag.dataDirectoryPath+EssensVorschlag.anregungenFilename, true); //the true will append the new data
             Date d = new Date();
             SimpleDateFormat df = new SimpleDateFormat("yyyy MMM dd");
-            fw.write(df.format(d) + " : \t\t" + name + System.getProperty("line.separator")); //appends the string to the file
-            fw.close();
+            
+            String line=df.format(d) + " : \t\t" + name + System.getProperty("line.separator");
+            
+            DataHandler.appendOneLineLocalTextFile(line, EssensVorschlag.anregungenFilename);
         } catch (IOException ioe) {
             EssensVorschlag.writeToLogConsole(ioe.getMessage());
             System.err.println("IOException: " + ioe.getMessage());
-        } finally {
-            try {
-                fw.close();
-            } catch (IOException ex) {
-                EssensVorschlag.writeToLogConsole(ex);
-                Logger.getLogger(Gericht.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
     }
 }

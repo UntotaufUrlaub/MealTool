@@ -6,26 +6,23 @@
 
 /*
 --- atm:
-linux adaption | File storage location:
-Issue Discription: relativ paths have been set accoring to the working directory of the application.
-    As it seems to be hard to predict where this directory is, the locations of the data are not ensured.
-    So the paths have to be set relativ to an absolut path. (-> static String dataDirectoryPath;)
-    As i want the data to located next to the jar. to prevent files to be spread around the system,
-    leading to that no user knows where.
-    So we set that path to the parent directory of the jar. and use it as offset for all paths.
-done:   
-    * every use of a File Reader uses the offset
-    * every use of a File writer uses the offset
-    * (till now there are no other relevant locations)
-    * "pfad" renamed "to pathToMealListFile" and fixed the issues about its location.
-    * If the file specified by the path in the pfad file is not found, setpath is 
-        invoked and the user has the possibility to specify the location again
+linux adaption | Umlaut handling: bundled all reading and writing and switched to utf-8
+Issue Discription: On Linux the umlauts are just displayed as strange Symbols. 
+    It is not an issue of display. It seems the file(from another Os) 
+    is not read in the right format. The standart charset java uses to read and 
+    write txts is platform dependent. So we inforce utf-8 encoding everywhere.
+    (And then update the old date manually as it is just one set) Curing this i try
+    to handle all data reading/writing stuff on one location called DataHandler
+todo:
+    * (outside of programm) update (my) data
+done:
+    * Move datahandling to DataHandler:
+        * move all FileReaders;
+        * move all FileWriters;
+    * [DataHandler] Convert to try-With-Resources : should take care off closing the streams
+    * switched reading and writing to utf-8
 
 General Done:
-    6.4.18
-        [EssensVorschlag]
-            "schreiben()" renamed to "writeToLogConsole()"
-            "loadData()" renamed to "loadMealListData()"
 */
 package essensvorschlag;
 
@@ -35,11 +32,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -60,7 +53,6 @@ import javax.swing.JTextField;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
-import static essensvorschlag.EssensVorschlag.writeToLogConsole;
 import static essensvorschlag.EssensVorschlag.writeToLogConsole;
 
 /**
@@ -188,25 +180,22 @@ public class EssensVorschlag {
     }
     
     private static void loadMealListData(){
-        FileReader fr=null;
-        BufferedReader br;
         try {
-            fr = new FileReader(dataDirectoryPath+"pfad.txt");
-            br= new BufferedReader(fr);
-            try {
-                pathToMealListFile=br.readLine();
-            } catch (IOException ex) {
-                writeToLogConsole(ex);
-                Logger.getLogger(EssensVorschlag.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            pathToMealListFile=DataHandler.loadLocalTextFile("pfad.txt");
         } catch (FileNotFoundException ex) {
             setPfad();
+        } catch (IOException ex) {
+            writeToLogConsole(ex);
+            Logger.getLogger(EssensVorschlag.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         writeToLogConsole("path to the Meal_List_File: "+pathToMealListFile);
 
         try {
-            fr=new FileReader(pathToMealListFile);
+            String[] zeilenArray=DataHandler.loadTextFile(pathToMealListFile).split("\n");
+            for(int i=0;i<zeilenArray.length;i++){
+                zeilen.add(zeilenArray[i]);
+            }
         } catch (FileNotFoundException ex) {
             writeToLogConsole(ex.getMessage());
             Logger.getLogger(EssensVorschlag.class.getName()).log(Level.SEVERE, null, ex);
@@ -216,16 +205,6 @@ public class EssensVorschlag {
             setPfad();
             loadMealListData();
             return;
-        }
-        br=new BufferedReader(fr);
-        
-        String zeile;
-        try {
-            zeile=br.readLine();
-            while(zeile!=null){
-                zeilen.add(zeile);
-                zeile=br.readLine();
-            }
         } catch (IOException ex) {
             writeToLogConsole(ex);
         }
@@ -261,73 +240,50 @@ public class EssensVorschlag {
     }
     
     private static void getOption(){
-        FileReader fr;
-        BufferedReader br;
-        
         try {
-            fr = new FileReader(dataDirectoryPath+"optionFile.txt");
+            String[] zeilenArray=DataHandler.loadLocalTextFile("optionFile.txt").split("\n");
+            writeToLogConsole("(getOption) OptionFile: gefunden");
+            
+            String optionVersion=zeilenArray[0];
+            writeToLogConsole("(getOption) version: "+optionVersion);
+            optionen[0]=zeilenArray[1].substring(15);
+            writeToLogConsole("(getOption) schriftgröße: "+optionen[0]);
+            
+            optionen[1]=zeilenArray[2].substring(16);
+            optionen[2]=zeilenArray[3].substring(16);
+            optionen[3]=zeilenArray[4].substring(28);
+            optionen[4]=zeilenArray[5].substring(33);
         } catch (FileNotFoundException ex) {
             writeToLogConsole("(getOption) OptionFile: currently creating");
-            FileWriter fw;
-            BufferedWriter bw=null;
             try {
-                fw = new FileWriter(dataDirectoryPath+"optionFile.txt");
-                bw = new BufferedWriter(fw);
+                ArrayList<String> lineList=new ArrayList();
+
+                lineList.add("V 1");
                 
-                bw.write("V 1");
-                bw.newLine();
-                
-                bw.write("schriftgröße : 12");
-                bw.newLine();
+                lineList.add("schriftgröße : 12");
                 optionen[0]="12";
                 
-                bw.write("Fenster Pos X : 0");
-                bw.newLine();
+                lineList.add("Fenster Pos X : 0");
                 optionen[1]="0";
                 
-                bw.write("Fenster Pos Y : 0");
-                bw.newLine();
+                lineList.add("Fenster Pos Y : 0");
                 optionen[2]="0";
                 
-                bw.write("Standart Background Farbe : 255,255,255");
-                bw.newLine();
+                lineList.add("Standart Background Farbe : 255,255,255");
                 optionen[3]="255,255,255";
                 
-                bw.write("PlanungsModus Background Farbe : 219,29,4");
+                lineList.add("PlanungsModus Background Farbe : 219,29,4");
                 optionen[4]="219,29,4";
                 
                 writeToLogConsole("(getOption) finished writing");
                 
+                DataHandler.saveLocalTextFile(lineList, "optionFile.txt");
+                
             } catch (IOException ex1) {
+                writeToLogConsole("(getOption) OptionFile: Creation didnt work; aborted.");
                 writeToLogConsole(ex.getMessage());
                 Logger.getLogger(EssensVorschlag.class.getName()).log(Level.SEVERE, null, ex1);
             }
-            finally{
-                try {
-                    if(bw!=null){
-                        bw.close();
-                    }
-                } catch (IOException ex1) {
-                    writeToLogConsole(ex.getMessage());
-                    Logger.getLogger(EssensVorschlag.class.getName()).log(Level.SEVERE, null, ex1);
-                }
-            }
-            return;
-        }
-        
-        writeToLogConsole("(getOption) OptionFile: gefunden");
-        
-        br=new BufferedReader(fr);
-        try {
-            String optionVersion=br.readLine();
-            writeToLogConsole("(getOption) version: "+optionVersion);
-            optionen[0]=br.readLine().substring(15);
-            writeToLogConsole("(getOption) schriftgröße: "+optionen[0]);
-            
-            optionen[1]=br.readLine().substring(16);
-            optionen[2]=br.readLine().substring(16);
-            optionen[3]=br.readLine().substring(28);
-            optionen[4]=br.readLine().substring(33);
         } catch (IOException ex1) {
             writeToLogConsole(ex1.getMessage());
             Logger.getLogger(EssensVorschlag.class.getName()).log(Level.SEVERE, null, ex1);
@@ -335,66 +291,48 @@ public class EssensVorschlag {
     }
     
     private static void loadAlleHashTagsListe(){
-        FileReader fr;
-        BufferedReader br;
-        
         try {
-            fr = new FileReader(dataDirectoryPath+"hashTagFile.txt");
+            String[] zeilenArray=DataHandler.loadLocalTextFile("hashTagFile.txt").split("\n");
+            
+            writeToLogConsole("(loadAlleHashTagsListe) hashTagFile: gefunden.");
+            
+            ArrayList<String> zeilen=new ArrayList();
+            for(int i=0;i<zeilenArray.length;i++){
+                    zeilen.add(zeilenArray[i]);
+            }
+
+            checkHashTagsListeVersion(zeilen);
+
+            for(int i=0;i<zeilen.size();i++){
+writeToLogConsole("(loadAlleHashTagsListe) "+zeilen.get(i));
+                String[] trennung=zeilen.get(i).split("#");
+                String name=trennung[0];
+                String auswahl=trennung[1];
+                EssensVorschlag.alleHashTags.add(new HashTagLabel(name,auswahl));
+                if (auswahl.equals("ohne")) {
+                    EssensVorschlag.aktiveHashTagsOhne.add(name);
+                } else if (auswahl.equals("nur")) {
+                    EssensVorschlag.aktiveHashTagsNur.add(name);
+                }
+            }
+            
         } catch (FileNotFoundException ex) {
             writeToLogConsole("(loadAlleHashTagsListe) hashTagFile: wurde erstellt.");
-            FileWriter fw;
-            BufferedWriter bw=null;
             try {
-                fw = new FileWriter(dataDirectoryPath+"hashTagFile.txt");
-                bw = new BufferedWriter(fw);
+                ArrayList<String> linesList=new ArrayList();
                 
-                bw.write("Version: 1");
+                linesList.add("Version: 1");
+                
+                DataHandler.saveLocalTextFile(linesList, "hashTagFile.txt");
             } catch (IOException ex1) {
                 writeToLogConsole(ex.getMessage());
                 Logger.getLogger(EssensVorschlag.class.getName()).log(Level.SEVERE, null, ex1);
             }
-            finally{
-                try {
-                    if(bw!=null)bw.close();
-                } catch (IOException ex1) {
-                    writeToLogConsole(ex.getMessage());
-                    Logger.getLogger(EssensVorschlag.class.getName()).log(Level.SEVERE, null, ex1);
-                }
-            }
-            return; //dadurch das hier abgebrochen wird, wird nur n file mit "Version 1" und ansonsten nix erstellt. 
+            return; //dadurch das hier abgebrochen wird, wird nur ein file mit "Version 1" und ansonsten nix erstellt. 
                     //Da das file leer ist passiert kein fehler beim einlesen(da ja nix eingelesen wird). 
                     //beim speichern wird dann automatisch alles in der richtigen version gespeichert
-        }
-        
-        writeToLogConsole("(loadAlleHashTagsListe) hashTagFile: gefunden.");
-        
-        br=new BufferedReader(fr);
-        
-        String zeile;
-        ArrayList<String> zeilen=new ArrayList();
-        try {
-            zeile=br.readLine();
-            while(zeile!=null){
-                zeilen.add(zeile);
-                zeile=br.readLine();
-            }
         } catch (IOException ex) {
             writeToLogConsole(ex);
-        }
-        
-        checkHashTagsListeVersion(zeilen);
-            
-        for(int i=0;i<zeilen.size();i++){
-writeToLogConsole("(loadAlleHashTagsListe) "+zeilen.get(i));
-            String[] trennung=zeilen.get(i).split("#");
-            String name=trennung[0];
-            String auswahl=trennung[1];
-            EssensVorschlag.alleHashTags.add(new HashTagLabel(name,auswahl));
-            if (auswahl.equals("ohne")) {
-                EssensVorschlag.aktiveHashTagsOhne.add(name);
-            } else if (auswahl.equals("nur")) {
-                EssensVorschlag.aktiveHashTagsNur.add(name);
-            }
         }
     }
     
@@ -421,48 +359,19 @@ writeToLogConsole("(loadAlleHashTagsListe) "+zeilen.get(i));
     }
     
     private static void loadVorgemerkteGerichte(){
-        FileReader fr;
-        BufferedReader br;
-        
         try {
-            fr = new FileReader(dataDirectoryPath+"VorgemerkteGerichteFile.txt");
-        } catch (FileNotFoundException ex) {
-            writeToLogConsole("(loadVorgemerkteGerichte) VorgemerkteGerichteFile: wurde erstellt.");
-            FileWriter fw;
-            BufferedWriter bw=null;
-            try {
-                fw = new FileWriter(dataDirectoryPath+"VorgemerkteGerichteFile.txt");
-                bw = new BufferedWriter(fw);
-                
-                bw.write("Version: 1");
-            } catch (IOException ex1) {
-                writeToLogConsole(ex.getMessage());
-                Logger.getLogger(EssensVorschlag.class.getName()).log(Level.SEVERE, null, ex1);
-            }
-            finally{
-                try {
-                    if(bw!=null)bw.close();
-                } catch (IOException ex1) {
-                    writeToLogConsole(ex.getMessage());
-                    Logger.getLogger(EssensVorschlag.class.getName()).log(Level.SEVERE, null, ex1);
-                }
-            }
-            return;
-        }
+            String[] zeilenArray=DataHandler.loadLocalTextFile("VorgemerkteGerichteFile.txt").split("\n");
+            
+            writeToLogConsole("(loadVorgemerkteGerichte) VorgemerkteGerichteFile: gefunden.");
         
-        writeToLogConsole("(loadVorgemerkteGerichte) VorgemerkteGerichteFile: gefunden.");
-        
-        br=new BufferedReader(fr);
-        try {
-            String zeile=br.readLine();
-            if(zeile.equals("Version: 1")){
-                zeile=br.readLine();
-            }
-            else{
+            String zeile=zeilenArray[0];
+            if(!zeile.equals("Version: 1")){
                 throw new RuntimeException("Fehler bei der VorgemerkteGerichteFile Version");
             }
-            while(zeile!=null){
+            for(int j=1;j<zeilenArray.length;j++){
 //schreiben("(loadAlleHashTagsListe) "+zeile);
+                //if the remembered Meal is one of the list its gericht is used. If not a dummy gericht with the right name is created and used
+                zeile=zeilenArray[j];
                 int zeiger=-1;
                 for(int i=0;i<liste.size();i++){
                     if(zeile.equals(liste.get(i).name)){
@@ -475,7 +384,18 @@ writeToLogConsole("(loadAlleHashTagsListe) "+zeilen.get(i));
                 else{
                     EssensVorschlag.vorgemerkteGerichte.add(liste.get(zeiger));
                 }
-                zeile=br.readLine();
+            }
+        } catch (FileNotFoundException ex) {
+            writeToLogConsole("(loadVorgemerkteGerichte) VorgemerkteGerichteFile: wurde erstellt.");
+            try {
+                ArrayList<String> linesList=new ArrayList();
+                
+                linesList.add("Version: 1");
+                
+                DataHandler.saveLocalTextFile(linesList, "VorgemerkteGerichteFile.txt");
+            } catch (IOException ex1) {
+                writeToLogConsole(ex.getMessage());
+                Logger.getLogger(EssensVorschlag.class.getName()).log(Level.SEVERE, null, ex1);
             }
         } catch (IOException ex1) {
             writeToLogConsole(ex1.getMessage());
@@ -484,58 +404,41 @@ writeToLogConsole("(loadAlleHashTagsListe) "+zeilen.get(i));
     }
     
     static void speichern(){
-        BufferedWriter bw = null;
-        FileWriter fw = null;
         try {
-            String content;
-            fw = new FileWriter(pathToMealListFile);
-            bw = new BufferedWriter(fw);
-            bw.write(zeilen.get(0));
-            bw.newLine();
+            ArrayList<String> linesList=new ArrayList();
+                
+            linesList.add(zeilen.get(0));
+            
             for(int i=0;i<liste.size();i++){
                 Gericht g=liste.get(i);
-                content=g.name+"#"+g.stand+"#"+g.wachstum+"#"+g.letztesEssen;
+                String content=g.name+"#"+g.stand+"#"+g.wachstum+"#"+g.letztesEssen;
                 //hashtags
                 content=content+"#";
                 for(int j=0;j<g.hashtags.size();j++){
                     content=content+g.hashtags.get(j)+";";
                 }
                 
-                bw.write(content);
-                bw.newLine();
+                linesList.add(content);
             }
+
+            DataHandler.saveTextFile(linesList, pathToMealListFile);
+            
 writeToLogConsole("(gerichte) gespeichert");
         } catch (IOException e) {
             writeToLogConsole(e.getMessage());
-        } finally {
-            try {
-                if (bw != null) {
-                    bw.close();
-                }
-
-                if (fw != null) {
-                    fw.close();
-                }
-            } catch (IOException ex) {
-                writeToLogConsole(ex.getMessage());
-            }
         }
     }
     
     static void alleHashTagsListeSpeichern(){
-        BufferedWriter bw;
-        FileWriter fw;
-        
         try{
-            fw=new FileWriter(dataDirectoryPath+"hashTagFile.txt");
-            bw=new BufferedWriter(fw);
-            bw.write("Version: 2");
-            bw.newLine();
+            ArrayList<String> linesList=new ArrayList();
+                
+            linesList.add("Version: 2");
             for(int i=0;i<EssensVorschlag.alleHashTags.size();i++){
-                bw.write(alleHashTags.get(i).hashtag+"#"+alleHashTags.get(i).dropDown.getSelectedItem());
-                bw.newLine();
+                linesList.add(alleHashTags.get(i).hashtag+"#"+alleHashTags.get(i).dropDown.getSelectedItem());
             }
-            bw.close();
+
+            DataHandler.saveLocalTextFile(linesList, "hashTagFile.txt");
         }
         catch(Exception ex){
             writeToLogConsole(ex.getMessage());
@@ -544,19 +447,15 @@ writeToLogConsole("(gerichte) gespeichert");
     }
     
     static void speichernVorgemerkteGerichteFile(){
-        BufferedWriter bw;
-        FileWriter fw;
-        
         try{
-            fw=new FileWriter(dataDirectoryPath+"VorgemerkteGerichteFile.txt");
-            bw=new BufferedWriter(fw);
-            bw.write("Version: 1");
-            bw.newLine();
+            ArrayList<String> linesList=new ArrayList();
+                
+            linesList.add("Version: 1");
             for(int i=0;i<EssensVorschlag.vorgemerkteGerichte.size();i++){
-                bw.write(vorgemerkteGerichte.get(i).name);
-                bw.newLine();
+                linesList.add(vorgemerkteGerichte.get(i).name);
             }
-            bw.close();
+
+            DataHandler.saveLocalTextFile(linesList, "VorgemerkteGerichteFile.txt");
         }
         catch(Exception ex){
             writeToLogConsole(ex.getMessage());
@@ -574,7 +473,7 @@ writeToLogConsole("(gerichte) gespeichert");
                             JOptionPane.YES_NO_OPTION);
         
         if(fileAuswählen==1){//nicht auswälen-> neu erstellen;
-            System.out.println("neu erstellen");
+System.out.println("neu erstellen");
             neuesGerichtFile();
             return;
         }
@@ -586,54 +485,40 @@ writeToLogConsole("(gerichte) gespeichert");
     }
     
     static void writePfad(){
-        BufferedWriter bw = null;
-        FileWriter fw = null;
         try {
-            fw = new FileWriter(dataDirectoryPath+"pfad.txt");
-            bw = new BufferedWriter(fw);
-            bw.write(pathToMealListFile);
+            ArrayList<String> linesList=new ArrayList();
+                
+            linesList.add(pathToMealListFile);
+            writeToLogConsole("(writePfad) path: "+pathToMealListFile);
+
+            DataHandler.saveLocalTextFile(linesList, "pfad.txt");
+            
         } catch (IOException e) {
             writeToLogConsole(e.getMessage());
-        } finally {
-            try {
-                if (bw != null) {
-                    bw.close();
-                }
-
-                if (fw != null) {
-                    fw.close();
-                }
-            } catch (IOException ex) {
-                writeToLogConsole(ex.getMessage());
-            }
         }
     }
     
     static void neuesGerichtFile(){
-        String gerichtFilePfad=dataDirectoryPath+"gerichte(auto).txt";
-        
-        FileWriter fw;
-        BufferedWriter bw;
+        String gerichtFilePfad="gerichte(auto).txt";
         try{
             //erstellt das neue File;
-            fw = new FileWriter(gerichtFilePfad);
-            bw = new BufferedWriter(fw);
-            bw.write("dummy1#0#1");
-            bw.newLine();
-            bw.write("dummy2#0#1");
-            bw.newLine();
-            bw.write("dummy3#0#1");
-            bw.newLine();
-            bw.write("dummy4#0#1");
-            bw.newLine();
-            bw.write("dummy5#0#1");
-            bw.newLine();
-            bw.close();
+            ArrayList<String> linesList=new ArrayList();
+                
+            linesList.add("dummy1#0#1");
+            linesList.add("dummy2#0#1");
+            linesList.add("dummy3#0#1");
+            linesList.add("dummy4#0#1");
+            linesList.add("dummy5#0#1");
+
+            pathToMealListFile=EssensVorschlag.dataDirectoryPath+gerichtFilePfad;
+            DataHandler.saveTextFile(linesList, pathToMealListFile);
+            
+            writeToLogConsole("(neuesGerichtFile) path: "+pathToMealListFile);
+            
+            writePfad();
         }catch(IOException ioex){
             writeToLogConsole(ioex);
         }
-        EssensVorschlag.pathToMealListFile=gerichtFilePfad;
-        writePfad();
     }
     
     static void build(){
@@ -953,26 +838,18 @@ writeToLogConsole("(gerichte) gespeichert");
     }
     
     static void tagebuchEintragen(String name){
-        FileWriter fw=null;
         try{
-            fw = new FileWriter(dataDirectoryPath+TagebuchFilename,true); //the true will append the new data
             Date d = new Date();
             SimpleDateFormat df = new SimpleDateFormat("yyyy MMM dd HH:mm EEE");
-            fw.write(df.format(d)+" : \t"+name+System.getProperty("line.separator"));//appends the string to the file
-            fw.close();
+            
+            String line=df.format(d)+" : \t"+name+System.getProperty("line.separator");
+
+            DataHandler.appendOneLineLocalTextFile(line, TagebuchFilename);
         }
         catch(IOException ioe)
         {
             writeToLogConsole(ioe.getMessage());
             System.err.println("IOException: " + ioe.getMessage());
-        }
-        finally{
-            try {
-                fw.close();
-            } catch (IOException ex) {
-                EssensVorschlag.writeToLogConsole(ex.getMessage());
-                Logger.getLogger(Gericht.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
     }
     
@@ -982,39 +859,24 @@ writeToLogConsole("(gerichtBearbeitenMenueAnzeigen)");
     }
     
     static String rezeptLaden(String name){
-        FileReader fr;
-        BufferedReader br;
-        
         try {
-            fr=new FileReader(rezeptOrdnerPfad+name+".txt");
+            return DataHandler.loadLocalTextFile(rezeptOrdnerPfad+name+".txt");
         } catch (FileNotFoundException ex) {
             return "es gibt noch kein rezept";
-        }
-        br=new BufferedReader(fr);
-        String ausgabe="";
-        try {
-            String zeile=br.readLine();
-            while(zeile!=null){
-                ausgabe=ausgabe.concat(zeile+"\n");
-                zeile=br.readLine();
-            }
-            br.close();
         } catch (IOException ex) {
             writeToLogConsole(ex);
             throw new RuntimeException("check Log");
         }
-        return ausgabe;
     }
     
     static void rezeptSpeichern(String name, String rezeptEingabe){
-        FileWriter fw;
-        BufferedWriter bw;
-        
         try {
-            fw=new FileWriter(dataDirectoryPath+rezeptOrdnerPfad+name+".txt");
-            bw=new BufferedWriter(fw);
-            bw.write(rezeptEingabe);
-            bw.close();
+            ArrayList<String> linesList=new ArrayList();
+            
+            linesList.add(rezeptEingabe);
+            
+            DataHandler.saveLocalTextFile(linesList, rezeptOrdnerPfad+name+".txt");
+            
         } catch (IOException ex) {
             Logger.getLogger(EssensVorschlag.class.getName()).log(Level.SEVERE, null, ex);
             writeToLogConsole(ex);
@@ -1033,14 +895,12 @@ writeToLogConsole("(gerichtBearbeitenMenueAnzeigen)");
     }
     
     static void anregungenSpeichern(String eingabe){
-        FileWriter fw;
-        BufferedWriter bw;
-        
         try {
-            fw=new FileWriter(dataDirectoryPath+anregungenFilename);
-            bw=new BufferedWriter(fw);
-            bw.write(eingabe);
-            bw.close();
+            ArrayList<String> linesList=new ArrayList();
+                
+            linesList.add(eingabe);
+
+            DataHandler.saveLocalTextFile(linesList, anregungenFilename);            
         } catch (IOException ex) {
             Logger.getLogger(EssensVorschlag.class.getName()).log(Level.SEVERE, null, ex);
             writeToLogConsole(ex);
@@ -1048,39 +908,24 @@ writeToLogConsole("(gerichtBearbeitenMenueAnzeigen)");
     }
     
     static String notizenLaden(){
-        FileReader fr;
-        BufferedReader br;
-        
         try {
-            fr=new FileReader(dataDirectoryPath+notizenFilePfad);
+            return DataHandler.loadLocalTextFile(notizenFilePfad);
         } catch (FileNotFoundException ex) {
             return "hier notizen einfuegen";
-        }
-        br=new BufferedReader(fr);
-        String ausgabe="";
-        try {
-            String zeile=br.readLine();
-            while(zeile!=null){
-                ausgabe=ausgabe.concat(zeile+"\n");
-                zeile=br.readLine();
-            }
-            br.close();
         } catch (IOException ex) {
             writeToLogConsole(ex);
             throw new RuntimeException("check Log");
         }
-        return ausgabe;
     }
     
     static void notizenSpeichern(String text){
-        FileWriter fw;
-        BufferedWriter bw;
-        
         try {
-            fw=new FileWriter(dataDirectoryPath+notizenFilePfad);
-            bw=new BufferedWriter(fw);
-            bw.write(text);
-            bw.close();
+            ArrayList<String> linesList=new ArrayList();
+                
+            linesList.add(text);
+
+            DataHandler.saveLocalTextFile(linesList, notizenFilePfad); 
+            
         } catch (IOException ex) {
             writeToLogConsole(ex);
         }
